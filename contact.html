@@ -133,7 +133,7 @@
           </div>
 
           <div class="col-lg-6">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="500">
+            <form id="contact-form" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="500">
               <div class="row gy-4">
 
                 <div class="col-md-6">
@@ -267,7 +267,6 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
@@ -278,6 +277,46 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $("#contact-form").on("submit", function (e) {
+      e.preventDefault();
+
+      var form = $(this);
+      var loading = form.find(".loading");
+      var errorMessage = form.find(".error-message");
+      var sentMessage = form.find(".sent-message");
+
+      loading.show();
+      errorMessage.hide();
+      sentMessage.hide();
+
+      var formData = {
+        name: form.find("input[name='name']").val(),
+        email: form.find("input[name='email']").val(),
+        subject: form.find("input[name='subject']").val(),
+        message: form.find("textarea[name='message']").val()
+      };
+
+      $.ajax({
+        url: "http://localhost:8000/send-message",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(formData),
+        success: function (response) {
+          loading.hide();
+          sentMessage.show();
+          form[0].reset();
+        },
+        error: function (xhr) {
+          loading.hide();
+          let err = xhr.responseJSON?.error || "Something went wrong. Try again!";
+          errorMessage.text(err).show();
+        }
+      });
+    });
+  </script>
+
 
 </body>
 
