@@ -6,4 +6,8 @@ app = FastAPI()
 
 setup_middleware(app)
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 app.include_router(email_router)
